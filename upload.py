@@ -1,33 +1,46 @@
 import os
 import time
 
-save_path = os.getcwd() + "/saveVideo"
-drive = "little:mitagun"
+path = os.getcwd()
+drive = "little:Record_Files"
 copied_path = os.getcwd() + "/copiedVideo"
 
 while(1):
     os.system("clear")
-    print("checking to upload")
+    # load the streamers list from a external file "streamers.txt"
+    save_dir = os.listdir()
+    with open('{}/streamers.txt'.format(path)) as streamers:
+        for line in streamers.readlines():
+            strs = line.split(' ')
+            streamer_name = strs[0]
+            print("Checking {}'s record files...".format(streamer_name), end = '')
+            if streamer_name in save_dir:
+                # try to copy files to the cloud drive
+                record_files = os.listdir("{}/{}".format(path, streamer_name))
+                if record_files:
+                    print("START to copy {}'s record files".format(streamer_name))
+                    cmd = "rclone copy --progress --max-age 1h {}/{} {}/{}".format(
+                        path, streamer_name, drive, streamer_name)
+                    fail = os.system(cmd)
 
-    # copy files to online drive
-    files = os.listdir(save_path)
-    if(files):
-        for file in files:
-            cmd = "rclone copy --progress --max-age 1h {} {}".format(save_path, drive)
-            result = os.system(cmd)
-                
-            # tranference successed
-            if result == 0:
-                os.system("mv {}/{} {}/{}".format(save_path, file, copied_path, file))
+                # copy successed
+                    if not fail:
+                        for record_file in record_files:
+                            os.system("mv {}/{}/{} {}/{}".format(
+                                path, streamer_name, record_file, copied_path, record_file))
+                else:
+                    print("NOT FOUND {}'s record files".format(streamer_name))
+            else:
+                print("NOT FOUND dictory named {}".format(streamer_name))
 
     # clean old archive files(at least 2 days ago)
-    files = os.listdir(copied_path)
+    copied_files = os.listdir(copied_path)
     date_1 = time.strftime("%Y%m%d", time.gmtime(time.time() + 8 * 60 * 60))
     date_2 = time.strftime("%Y%m%d", time.gmtime(time.time() - 16 * 60 * 60))
     date_3 = time.strftime("%Y%m%d", time.gmtime(time.time() - 40 * 60 * 60))
-    for file in files:
-        if not(date_1 in file or date_2 in file or date_3 in file):
-            os.system("rm {}/{}".format(copied_path, file))
+    for copied_file in copied_files:
+        if not(date_1 in copied_file or date_2 in copied_file or date_3 in copied_file):
+            os.system("rm {}/{}".format(copied_path, copied_file))
             
     print("done")
     time.sleep(60)
