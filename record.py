@@ -14,8 +14,14 @@ with open('{}/streamers.txt'.format(path)) as streamers:
             streamer_name = strs[0]
             stream_url = strs[1]
             file_format = strs[2]
+
+            # Password for Twitcasting locked stream
+            password = ""
+            if len(strs) > 3:
+                password += " --twitcasting-password {}".format(strs[3])
             start = 1
             break
+    
     if not start:
         print("NOT FOUND the streamer name")
 
@@ -32,6 +38,6 @@ while streamer_name:
     print("Now recording: {}: {}".format(streamer_name, stream_url))
     time_gmt8 = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
     file_name = "{}/{}_{}.{}".format(save_path, streamer_name, time_gmt8, file_format)
-    cmd = "streamlink {} best -o {}".format(stream_url, file_name)
+    cmd = "streamlink {} best{} -o {}".format(stream_url, password, file_name)
     os.system(cmd)
     time.sleep(20)

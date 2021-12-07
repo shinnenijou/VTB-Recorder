@@ -2,7 +2,7 @@ import os
 import time
 
 path = os.getcwd()
-drive = "little:Record_Files"
+drive = "shinnen:Record_Files"
 copied_path = os.getcwd() + "/copiedVideo"
 
 while(1):
