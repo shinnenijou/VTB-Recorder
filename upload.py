@@ -1,37 +1,38 @@
 import os
 import time
 
-path = os.getcwd()
-drive = "shinnen:Record_Files"
-copied_path = os.getcwd() + "/copiedVideo"
+# const
+INTERVAL = 60
 
-while(1):
+path = os.getcwd()
+config_path = path + "/config"
+drive = "shinnen:Record_Files"
+copied_path = path + "/temp/copied"
+
+while True:
     os.system("clear")
     # load the streamers list from a external file "streamers.txt"
-    save_dir = os.listdir()
-    with open('{}/streamers.txt'.format(path)) as streamers:
-        for line in streamers.readlines():
-            strs = line.split(' ')
-            streamer_name = strs[0]
-            print("Checking {}'s record files...".format(streamer_name), end = '')
-            if streamer_name in save_dir:
-                # try to copy files to the cloud drive
-                record_files = os.listdir("{}/{}".format(path, streamer_name))
-                if record_files:
-                    print("START to copy {}'s record files".format(streamer_name))
-                    cmd = "rclone copy --progress --max-age 1h {}/{} {}/{}".format(
-                        path, streamer_name, drive, streamer_name)
-                    fail = os.system(cmd)
+    config_files = os.listdir(config_path)
+    for config_file in config_files:
+        if "password" in config_file:
+            continue
+        streamer_name = config_file[:-4]
+        print("Checking {}'s record files...".format(streamer_name), end = '')
+        record_files = os.listdir("{}/{}".format(path, streamer_name))
+        
+        # try to copy files to the cloud drive
+        if record_files:
+            print("START to copy {}'s record files".format(streamer_name))
+            cmd = "rclone copy --progress --max-age 1h {}/{} {}/{}".format(
+                path, streamer_name, drive, streamer_name)
+            fail = os.system(cmd)
 
-                # copy successed
-                    if not fail:
-                        for record_file in record_files:
-                            os.system("mv {}/{}/{} {}/{}".format(
-                                path, streamer_name, record_file, copied_path, record_file))
-                else:
-                    print("NOT FOUND {}'s record files".format(streamer_name))
-            else:
-                print("NOT FOUND dictory named {}".format(streamer_name))
+        # copy successed
+            if not fail:
+                for record_file in record_files:
+                    os.system("mv {}/{}/{} {}/{}".format(path, streamer_name, record_file, copied_path, record_file))
+        else:
+            print("NOT FOUND")
 
     # clean old archive files(at least 2 days ago)
     copied_files = os.listdir(copied_path)
@@ -41,6 +42,5 @@ while(1):
     for copied_file in copied_files:
         if not(date_1 in copied_file or date_2 in copied_file or date_3 in copied_file):
             os.system("rm {}/{}".format(copied_path, copied_file))
-            
-    print("done")
-    time.sleep(60)
+
+    time.sleep(INTERVAL)
