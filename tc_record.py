@@ -4,7 +4,7 @@ import requests
 import json
 
 # const
-INTERVAL = 20
+INTERVAL = 30
 RECORD_FORMAT = 'ts'
 
 streamer_name = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
@@ -30,17 +30,20 @@ api_url = "https://twitcasting.tv/streamserver.php?target={}&mode=client".format
 while True:
     # get live info from twitcasting api
     while True:
-        os.system("clear")
-        print(room_url)
-        print(room_id)
-        resp = requests.get(api_url)
-        resp.encoding = "UTF-8"
-        info = json.loads(resp.text)
-        live_status = info['movie']['live']
-        if live_status:
-            break
-        print("The stream is offline.")
-        time.sleep(INTERVAL)
+        try:
+            os.system("clear")
+            print(room_url)
+            print(room_id)
+            resp = requests.get(api_url)
+            resp.encoding = "UTF-8"
+            info = json.loads(resp.text)
+            live_status = info['movie']['live']
+            if live_status:
+                break
+            print("The stream is offline.")
+            time.sleep(INTERVAL)
+        except ConnectionError:
+            pass
 
     # record stream
     os.system("clear")
