@@ -30,31 +30,38 @@ api_url = "https://twitcasting.tv/streamserver.php?target={}&mode=client".format
 while True:
     # get live info from twitcasting api
     while True:
+        # set password if exists
+        pw = ""
         try:
-            os.system("clear")
-            print(room_url)
-            print(room_id)
+            with open("{}/{}_password.txt".format(config_path, streamer_name)) as f:
+                pw = f.readline().strip()
+        except FileNotFoundError:
+            pass
+        if pw:
+            print("Detect the password: {}".format(pw))
+            pw = " --twitcasting-password {}".format(pw)
+
+        # Detect stream status    
+        os.system("clear")
+        print(room_url)
+        print(room_id)
+        try:
             resp = requests.get(api_url)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
-            live_status = info['movie']['live']
-            if live_status:
-                break
+            if "movie" in info:
+                live_status = info['movie']['live']
+                if live_status:
+                    break
             print("The stream is offline.")
-            time.sleep(INTERVAL)
         except ConnectionError:
             pass
+        time.sleep(INTERVAL)
+        
 
     # record stream
     os.system("clear")
     print("Start to record the stream: {} from twitcasting.tv".format(streamer_name))
-
-    # set password if exists
-    with open("{}/{}_password.txt".format(config_path, streamer_name)) as f:
-        pw = f.readline().strip()
-    if pw:
-        print("Detect the password: {}".format(pw))
-        pw = " --twitcasting-password {}".format(pw)
     time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
     file_name = "{}_{}.{}".format(streamer_name, time_stamp, RECORD_FORMAT)
     cmd = "streamlink {} best{} -o {}/{}".format(room_url, pw, record_path, file_name)

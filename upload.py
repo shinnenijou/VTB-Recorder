@@ -1,5 +1,6 @@
 import os
 import time
+from xml.dom import NOT_FOUND_ERR
 
 # const
 INTERVAL = 60
@@ -18,7 +19,11 @@ while True:
             continue
         streamer_name = config_file[:-4]
         print("Checking {}'s record files...".format(streamer_name), end = '')
-        record_files = os.listdir("{}/{}".format(path, streamer_name))
+        record_files = []
+        try:
+            record_files = os.listdir("{}/{}".format(path, streamer_name))
+        except FileNotFoundError:
+            pass
         
         # try to copy files to the cloud drive
         if record_files:

@@ -36,14 +36,15 @@ while True:
             resp = requests.get(api_url)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
-            live_status = info['data']['live_status']
-            live_title = info['data']['title']
-            if live_status == 1:
-                break
+            if "data" in info:
+                live_status = info['data']['live_status']
+                live_title = info['data']['title']
+                if live_status == 1:
+                    break
             print("The stream is offline.")
-            time.sleep(INTERVAL)
         except ConnectionError:
             pass
+        time.sleep(INTERVAL)
 
     # record stream
     os.system("clear")
