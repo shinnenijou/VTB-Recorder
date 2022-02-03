@@ -24,6 +24,7 @@ os.system("mkdir {}".format(streamer_name))
 #save_path = path + "/{}".format(streamer_name)
 record_path = path + "/temp/record"
 encode_path = path + "/temp/encode"
+log_path = path + "/log"
 
 api_url = "https://twitcasting.tv/streamserver.php?target={}&mode=client".format(room_id)
 
@@ -54,8 +55,11 @@ while True:
                 if live_status:
                     break
             print("The stream is offline.")
-        except ConnectionError:
-            pass
+        except Exception as e:
+            time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
+            with open(f"{log_path}/room_id.log", 'a') as log_file:
+                log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
+
         time.sleep(INTERVAL)
         
 

@@ -1,3 +1,4 @@
+from syslog import LOG_AUTHPRIV
 import time
 import os
 import requests
@@ -23,6 +24,7 @@ os.system("mkdir {}".format(streamer_name))
 #save_path = path + "/{}".format(streamer_name)
 record_path = path + "/temp/record"
 encode_path = path + "/temp/encode"
+log_path = path + "/log"
 
 api_url = "https://api.live.bilibili.com/room/v1/Room/get_info?room_id={}&from=room".format(room_id)
 
@@ -42,8 +44,10 @@ while True:
                 if live_status == 1:
                     break
             print("The stream is offline.")
-        except ConnectionError:
-            pass
+        except Exception as e:
+            time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
+            with open(f"{log_path}/room_id.log", 'a') as log_file:
+                log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
         time.sleep(INTERVAL)
 
     # record stream
