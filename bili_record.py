@@ -1,18 +1,13 @@
-from syslog import LOG_AUTHPRIV
 import time
 import os
 import requests
 import json
-
-# const
-INTERVAL = 30
-RECORD_FORMAT = 'ts'
+import config
 
 streamer_name = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
-path = os.getcwd()
 
 # load the streamers list from a external file "streamers.txt"
-with open('{}/config/{}.txt'.format(path, streamer_name)) as urls:
+with open(f"{config.CONFIG_PATH}/{streamer_name}") as urls:
     for url in urls.readlines():
         if "bilibili" in url:
             room_id = url[26:].strip()
@@ -20,14 +15,9 @@ with open('{}/config/{}.txt'.format(path, streamer_name)) as urls:
             break
 
 # mkdir for record files
-os.system("mkdir {}".format(streamer_name))
-#save_path = path + "/{}".format(streamer_name)
-record_path = path + "/temp/record"
-encode_path = path + "/temp/encode"
-log_path = path + "/log"
+os.system(f"mkdir {streamer_name}")
 
-api_url = "https://api.live.bilibili.com/room/v1/Room/get_info?room_id={}&from=room".format(room_id)
-
+API = config.BILI_API(room_id)
 while True:
     # get live info from bilibili api
     while True:
@@ -35,7 +25,7 @@ while True:
             os.system("clear")
             print(room_url)
             print(room_id)
-            resp = requests.get(api_url)
+            resp = requests.get(API)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
             if "data" in info:
@@ -46,15 +36,14 @@ while True:
             print("The stream is offline.")
         except Exception as e:
             time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-            with open(f"{log_path}/room_id.log", 'a') as log_file:
+            with open(f"{config.LOG_PATH}/room_id.log", 'a') as log_file:
                 log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
-        time.sleep(INTERVAL)
+        time.sleep(config.LISTEN_INTERVAL)
 
     # record stream
     os.system("clear")
-    print("Start to record the stream: {} from bilibili.com".format(streamer_name))
+    print(f"Start to record the stream: {streamer_name} from bilibili.com")
     time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-    file_name = "{}_{}_{}.{}".format(live_title, streamer_name, time_stamp, RECORD_FORMAT)
-    cmd = "streamlink {} best -o {}/{}".format(room_url, record_path, file_name)
-    os.system(cmd)
-    os.system("mv {}/{} {}/{}".format(record_path, file_name, encode_path, file_name))
+    file_name = f"{live_title,}_{streamer_name}_{time_stamp}.{config.RECORD_FORMAT}"
+    os.system(f"streamlink {room_url} best -o {config.RECORD_PATH}/{file_name}")
+    os.system(f"mv {config.RECORD_PATH}/{file_name} {config.ENCODE_PATH}/{file_name}")

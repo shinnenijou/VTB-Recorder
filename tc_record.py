@@ -2,52 +2,41 @@ import time
 import os
 import requests
 import json
-
-# const
-INTERVAL = 30
-RECORD_FORMAT = 'ts'
+import config
 
 streamer_name = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
-path = os.getcwd()
-config_path = path + "/config"
 
-# load the streamers list from a external file "streamers.txt"
-with open('{}/{}.txt'.format(config_path, streamer_name)) as urls:
+# read live url from a external file "{streamer}.txt"
+with open(f"{config.CONFIG_PATH}/{streamer_name}") as urls:
     for url in urls.readlines():
         if "twitcasting" in url:
             room_id = url[23:].strip()
             room_url = url.strip()
             break
 
-# mkdir for record files
-os.system("mkdir {}".format(streamer_name))
-#save_path = path + "/{}".format(streamer_name)
-record_path = path + "/temp/record"
-encode_path = path + "/temp/encode"
-log_path = path + "/log"
+# mkdir for record files 
+os.system(f"mkdir {streamer_name}")
 
-api_url = "https://twitcasting.tv/streamserver.php?target={}&mode=client".format(room_id)
-
+API = config.TWITCAS_API(room_id)
 while True:
     # get live info from twitcasting api
     while True:
+        os.system("clear")
         # set password if exists
-        pw = ""
         try:
-            with open("{}/{}_password.txt".format(config_path, streamer_name)) as f:
+            with open("{}/{}_password.txt".format(config.CONFIG_PATH, streamer_name)) as f:
                 pw = f.readline().strip()
         except FileNotFoundError:
-            pass
+            pw = ""
         if pw:
-            print("Detect the password: {}".format(pw))
-            pw = " --twitcasting-password {}".format(pw)
+            print(f"Detect the password: {pw}")
+            pw = f"--twitcasting-password {pw}"
 
-        # Detect stream status    
-        os.system("clear")
+        # Listen the stream status    
         print(room_url)
         print(room_id)
         try:
-            resp = requests.get(api_url)
+            resp = requests.get(API)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
             if "movie" in info:
@@ -56,18 +45,18 @@ while True:
                     break
             print("The stream is offline.")
         except Exception as e:
+            print(e)
             time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-            with open(f"{log_path}/room_id.log", 'a') as log_file:
+            with open(f"{config.LOG_PATH}/room_id.log", 'a') as log_file:
                 log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
 
-        time.sleep(INTERVAL)
+        time.sleep(config.LISTEN_INTERVAL)
         
 
     # record stream
     os.system("clear")
-    print("Start to record the stream: {} from twitcasting.tv".format(streamer_name))
+    print(f"Start to record the stream: {streamer_name} from twitcasting.tv")
     time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-    file_name = "{}_{}.{}".format(streamer_name, time_stamp, RECORD_FORMAT)
-    cmd = "streamlink {} best{} -o {}/{}".format(room_url, pw, record_path, file_name)
-    os.system(cmd)
-    os.system("mv {}/{} {}/{}".format(record_path, file_name, encode_path, file_name))
+    file_name = f"{streamer_name}_{time_stamp}.{config.RECORD_FORMAT}"
+    os.system(f"streamlink {room_url} best {pw} -o {config.RECORD_PATH}/{file_name}")
+    os.system(f"mv {config.RECORD_PATH}/{file_name} {config.ENCODE_PATH}/{file_name}")
