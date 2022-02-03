@@ -55,8 +55,8 @@ while True:
 
     # record stream
     os.system("clear")
-    print(f"Start to record the stream: {streamer_name} from twitcasting.tv")
+    print(f"Start to record the stream: {streamer} from twitcasting.tv")
     time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-    file_name = f"{streamer_name}_{time_stamp}.{config.RECORD_FORMAT}"
+    file_name = f"{streamer}_{time_stamp}.{config.RECORD_FORMAT}"
     os.system(f"streamlink {room_url} best {pw} -o {config.RECORD_PATH}/{file_name}")
     os.system(f"mv {config.RECORD_PATH}/{file_name} {config.ENCODE_PATH}/{file_name}")
