@@ -24,7 +24,7 @@ while True:
         os.system("clear")
         # set password if exists
         try:
-            with open("{}/{}/tc_password".format(config.PATH, streamer)) as f:
+            with open("{}/{}_tc_password".format(config.PATH, streamer)) as f:
                 pw = f.readline().strip()
         except FileNotFoundError:
             pw = ""
