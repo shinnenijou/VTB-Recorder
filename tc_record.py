@@ -4,10 +4,10 @@ import requests
 import json
 import config
 
-streamer_name = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
+streamer = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
 
 # read live url from a external file "{streamer}.txt"
-with open(f"{config.CONFIG_PATH}/{streamer_name}") as urls:
+with open(f"{config.CONFIG_PATH}/{streamer}") as urls:
     for url in urls.readlines():
         if "twitcasting" in url:
             room_id = url[23:].strip()
@@ -15,7 +15,7 @@ with open(f"{config.CONFIG_PATH}/{streamer_name}") as urls:
             break
 
 # mkdir for record files 
-os.system(f"mkdir {streamer_name}")
+os.system(f"mkdir {streamer}")
 
 API = config.TWITCAS_API(room_id)
 while True:
@@ -24,7 +24,7 @@ while True:
         os.system("clear")
         # set password if exists
         try:
-            with open("{}/{}_password.txt".format(config.CONFIG_PATH, streamer_name)) as f:
+            with open("{}/{}/tc_password".format(config.PATH, streamer)) as f:
                 pw = f.readline().strip()
         except FileNotFoundError:
             pw = ""
