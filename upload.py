@@ -33,6 +33,6 @@ while True:
     date_3 = time.strftime("%Y%m%d", time.gmtime(time.time() - 40 * 60 * 60))
     for file in copied_files:
         if not(date_1 in file or date_2 in file or date_3 in file):
-            os.system("rm {config.COPIED_PATH}/{file}")
+            os.system(f"rm {config.COPIED_PATH}/{file}")
 
     time.sleep(config.UPLOAD_INTERVAL)
