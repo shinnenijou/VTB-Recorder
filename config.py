@@ -4,8 +4,8 @@ UPLOAD_INTERVAL = 60
 TRANSCODE_INTERVAL = 30
 
 # FORMAT
-RECORD_FORMAT = ".ts"
-TRANSCODE_FORMAT = ".mp4"
+RECORD_FORMAT = "ts"
+TRANSCODE_FORMAT = "mp4"
 
 # PATHS
 PATH = "."
@@ -15,6 +15,10 @@ ENCODE_PATH = f"{PATH}/temp/encode"
 LOG_PATH = f"{PATH}/log"
 COPIED_PATH = f"{PATH}/temp/copied"
 DRIVE = "shinnen:Record_Files"
+
+# REQUEST HEADERS
+HEADERS = {}
+HEADERS["Connection"] = "close"
 
 # API
 def TWITCAS_API(room_id):

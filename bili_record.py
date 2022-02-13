@@ -25,7 +25,7 @@ while True:
             os.system("clear")
             print(room_url)
             print(room_id)
-            resp = requests.get(API)
+            resp = requests.get(API, config.HEADERS)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
             if "data" in info:
@@ -36,7 +36,7 @@ while True:
             print("The stream is offline.")
         except Exception as e:
             time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-            with open(f"{config.LOG_PATH}/room_id.log", 'a') as log_file:
+            with open(f"{config.LOG_PATH}/bili_{room_id}.log", 'a') as log_file:
                 log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
         time.sleep(config.LISTEN_INTERVAL)
 
