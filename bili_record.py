@@ -4,18 +4,21 @@ import requests
 import json
 import config
 
-streamer_name = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
+streamer = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
 
 # load the streamers list from a external file "streamers.txt"
-with open(f"{config.CONFIG_PATH}/{streamer_name}") as urls:
+with open(f"{config.CONFIG_PATH}/{streamer}") as urls:
     for url in urls.readlines():
         if "bilibili" in url:
             room_id = url[26:].strip()
             room_url = url.strip()
             break
 
-# mkdir for record files
-os.system(f"mkdir {streamer_name}")
+# mkdir
+os.system(f"mkdir {streamer}")
+os.system(f"mkdir {config.TEMP_DIR_PATH}")
+os.system(f"mkdir {config.ENCODE_PATH}")
+os.system(f"mkdir {config.RECORD_PATH}")
 
 API = config.BILI_API(room_id)
 while True:
@@ -42,8 +45,8 @@ while True:
 
     # record stream
     os.system("clear")
-    print(f"Start to record the stream: {streamer_name} from bilibili.com")
+    print(f"Start to record the stream: {streamer} from bilibili.com")
     time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-    file_name = f"{live_title,}_{streamer_name}_{time_stamp}.{config.RECORD_FORMAT}"
+    file_name = f"{live_title}_{streamer}_{time_stamp}.{config.RECORD_FORMAT}"
     os.system(f"streamlink {room_url} best -o {config.RECORD_PATH}/{file_name}")
     os.system(f"mv {config.RECORD_PATH}/{file_name} {config.ENCODE_PATH}/{file_name}")
