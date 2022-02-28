@@ -4,11 +4,12 @@ import requests
 import json
 import config
 
-streamer = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
-with open(f"{config.CONFIG_PATH}/{streamer}.json") as file:
+input = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
+with open(f"{config.CONFIG_PATH}/{input}.json") as file:
     streamer_config = json.loads(file.read())
     room_url = streamer_config["BILI_URL"].strip()
     room_id = room_url[room_url.find('/') + 1:]
+    streamer = streamer_config["OFFICIAL_NAME"]
 
 # mkdir
 os.system(f"mkdir {streamer}")

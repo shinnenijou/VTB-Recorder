@@ -4,13 +4,14 @@ import requests
 import json
 import config
 
-streamer = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
+input = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
 
 # read live url from a external file "{streamer}.json"
-with open(f"{config.CONFIG_PATH}/{streamer}.json") as file:
+with open(f"{config.CONFIG_PATH}/{input}.json") as file:
     streamer_config = json.loads(file.read())
     room_url = streamer_config["TWITCAS_URL"].strip()
     room_id = room_url[room_url.find('/') + 1:]
+    streamer = streamer_config["OFFICIAL_NAME"]
 
 # mkdir
 os.system(f"mkdir {streamer}")

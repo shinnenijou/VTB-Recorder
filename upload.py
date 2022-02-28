@@ -7,14 +7,14 @@ import json
 while True:
     os.system("clear")
     # load the streamers list from a external file "streamers.txt"
-    streamers = os.listdir(config.CONFIG_PATH)
-    for streamer in streamers:
+    config_files = os.listdir(config.CONFIG_PATH)
+    for config_file in config_files:
+        with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
+            streamer_config = json.loads(file.read())
+            streamer = streamer_config["OFFICLAL_NAME"]
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
-            with open(f"{config.CONFIG_PATH}/{streamer}", 'r') as file:
-                streamer_config = json.loads(file.read())
-
         except FileNotFoundError:
             record_files = []
         
