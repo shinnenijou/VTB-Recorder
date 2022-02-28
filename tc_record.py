@@ -32,7 +32,7 @@ while True:
 
         # Listen the stream status    
         print(room_url)
-        print(room_id)
+        print(streamer)
         try:
             resp = requests.get(API, headers=config.HEADERS)
             resp.encoding = "UTF-8"

@@ -24,7 +24,7 @@ while True:
         try:
             os.system("clear")
             print(room_url)
-            print(room_id)
+            print(streamer)
             resp = requests.get(API, config.HEADERS)
             resp.encoding = "UTF-8"
             info = json.loads(resp.text)
