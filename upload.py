@@ -12,6 +12,8 @@ while True:
         with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
             streamer_config = json.loads(file.read())
             streamer = streamer_config["OFFICIAL_NAME"]
+            drive_path = streamer_config["DRIVE"]
+            os.system(f"rclone mkdir {streamer_config['drive']}/{streamer}")
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
@@ -21,8 +23,7 @@ while True:
         # try to copy files to the cloud drive
         if record_files:
             print(f"START to copy {streamer}'s record files")
-            cmd = f"rclone copy --progress --max-age 1h \
-                {config.PATH}/{streamer} {streamer_config['drive']}/{streamer}"
+            cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
             fail = os.system(cmd)
 
             # if copy successed
