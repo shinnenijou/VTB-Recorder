@@ -11,7 +11,7 @@ while True:
     for config_file in config_files:
         with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
             streamer_config = json.loads(file.read())
-            streamer = streamer_config["OFFICLAL_NAME"]
+            streamer = streamer_config["OFFICIAL_NAME"]
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")

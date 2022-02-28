@@ -25,7 +25,9 @@ while True:
     while True:
         os.system("clear")
         # set password if exists
-        pw = streamer_config["TWITCAS_PASSWORD"]
+        with open(f"{config.CONFIG_PATH}/{input}.json") as file:
+            streamer_config = json.loads(file.read())
+            pw = streamer_config["TWITCAS_PASSWORD"]
         if pw:
             print(f"Detect the password: {pw}")
             pw = f"--twitcasting-password {pw}"
