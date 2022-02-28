@@ -4,16 +4,18 @@ import config
 import calendar
 import json
 
+prev_config = []
 while True:
     os.system("clear")
     # load the streamers list from a external file "streamers.txt"
     config_files = os.listdir(config.CONFIG_PATH)
     for config_file in config_files:
-        with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
-            streamer_config = json.loads(file.read())
-            streamer = streamer_config["OFFICIAL_NAME"]
-            drive_path = streamer_config["DRIVE"]
-            os.system(f"rclone mkdir {drive_path}/{streamer}")
+        if config_file not in prev_config:
+            with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
+                streamer_config = json.loads(file.read())
+                streamer = streamer_config["OFFICIAL_NAME"]
+                drive_path = streamer_config["DRIVE"]
+                os.system(f"rclone mkdir {drive_path}/{streamer}")
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
@@ -39,5 +41,6 @@ while True:
 
         else:
             print("NOT FOUND")
-  
+            
+    prev_config = config_files
     time.sleep(config.UPLOAD_INTERVAL)
