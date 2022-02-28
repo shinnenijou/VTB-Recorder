@@ -9,12 +9,15 @@ TRANSCODE_FORMAT = "mp4"
 
 # PATHS
 PATH = "."
+TEMP_DIR_PATH = f"{PATH}/temp"
 CONFIG_PATH = f"{PATH}/config"
 RECORD_PATH = f"{PATH}/temp/record"
 ENCODE_PATH = f"{PATH}/temp/encode"
 LOG_PATH = f"{PATH}/log"
 COPIED_PATH = f"{PATH}/temp/copied"
-DRIVE = "shinnen:Record_Files"
+
+# UPLOAD
+EXPIRATION = 7 # days
 
 # REQUEST HEADERS
 HEADERS = {}
