@@ -1,6 +1,7 @@
 import os
 import time
 import config
+import calendar
 
 while True:
     os.system("clear")
@@ -10,29 +11,33 @@ while True:
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
+            with open(f"{config.CONFIG_PATH}/{streamer}", 'r') as file:
+                lines = file.readlines()
+                for line in lines:
+                    if "DRIVE" in line.upper():
+                        drive_path = line.split()[1]
+
         except FileNotFoundError:
             record_files = []
         
         # try to copy files to the cloud drive
         if record_files:
             print(f"START to copy {streamer}'s record files")
-            cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {config.DRIVE}/{streamer}"
+            cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
             fail = os.system(cmd)
 
-        # copy successed
+            # if copy successed
+            # clean old files(expiration set by config.py)
             if not fail:
+                time_now = time.time()
                 for file in record_files:
-                    os.system(f"mv {config.PATH}/{streamer}/{file} {config.COPIED_PATH}/{file}")
+                    timestr = file[-len(config.TRANSCODE_FORMAT) - 16:-len(config.TRANSCODE_FORMAT) - 1]
+                    # convert to GMT (8h time gap)
+                    record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
+                    if time_now - record_time > config.EXPIRATION * 24 * 60 * 60:
+                        os.system(f"rm {config.PATH}/{streamer}/{file}")
+
         else:
             print("NOT FOUND")
-
-    # clean old archive files(at least 2 days ago)
-    copied_files = os.listdir(config.COPIED_PATH)
-    date_1 = time.strftime("%Y%m%d", time.gmtime(time.time() + 8 * 60 * 60))
-    date_2 = time.strftime("%Y%m%d", time.gmtime(time.time() - 16 * 60 * 60))
-    date_3 = time.strftime("%Y%m%d", time.gmtime(time.time() - 40 * 60 * 60))
-    for file in copied_files:
-        if not(date_1 in file or date_2 in file or date_3 in file):
-            os.system(f"rm {config.COPIED_PATH}/{file}")
-
+  
     time.sleep(config.UPLOAD_INTERVAL)
