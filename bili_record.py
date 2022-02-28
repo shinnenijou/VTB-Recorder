@@ -5,14 +5,10 @@ import json
 import config
 
 streamer = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
-
-# load the streamers list from a external file "streamers.txt"
-with open(f"{config.CONFIG_PATH}/{streamer}") as urls:
-    for url in urls.readlines():
-        if "bilibili" in url:
-            room_id = url[26:].strip()
-            room_url = url.strip()
-            break
+with open(f"{config.CONFIG_PATH}/{streamer}.json") as file:
+    streamer_config = json.loads(file.read())
+    room_url = streamer_config["BILI_URL"].strip()
+    room_id = room_url[room_url.find('/') + 1:]
 
 # mkdir
 os.system(f"mkdir {streamer}")

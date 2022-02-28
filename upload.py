@@ -2,6 +2,7 @@ import os
 import time
 import config
 import calendar
+import json
 
 while True:
     os.system("clear")
@@ -12,10 +13,7 @@ while True:
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
             with open(f"{config.CONFIG_PATH}/{streamer}", 'r') as file:
-                lines = file.readlines()
-                for line in lines:
-                    if "DRIVE" in line.upper():
-                        drive_path = line.split()[1]
+                streamer_config = json.loads(file.read())
 
         except FileNotFoundError:
             record_files = []
@@ -23,7 +21,8 @@ while True:
         # try to copy files to the cloud drive
         if record_files:
             print(f"START to copy {streamer}'s record files")
-            cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
+            cmd = f"rclone copy --progress --max-age 1h \
+                {config.PATH}/{streamer} {streamer_config['drive']}/{streamer}"
             fail = os.system(cmd)
 
             # if copy successed
