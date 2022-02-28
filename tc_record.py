@@ -14,8 +14,11 @@ with open(f"{config.CONFIG_PATH}/{streamer}") as urls:
             room_url = url.strip()
             break
 
-# mkdir for record files 
+# mkdir
 os.system(f"mkdir {streamer}")
+os.system(f"mkdir {config.TEMP_DIR_PATH}")
+os.system(f"mkdir {config.ENCODE_PATH}")
+os.system(f"mkdir {config.RECORD_PATH}")
 
 API = config.TWITCAS_API(room_id)
 while True:
@@ -45,7 +48,6 @@ while True:
                     break
             print("The stream is offline.")
         except Exception as e:
-            print(e)
             time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
             with open(f"{config.LOG_PATH}/tc_{room_id}.log", 'a') as log_file:
                 log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
