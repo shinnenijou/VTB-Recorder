@@ -13,7 +13,7 @@ while True:
             streamer_config = json.loads(file.read())
             streamer = streamer_config["OFFICIAL_NAME"]
             drive_path = streamer_config["DRIVE"]
-            os.system(f"rclone mkdir {streamer_config['drive']}/{streamer}")
+            os.system(f"rclone mkdir {drive_path}/{streamer}")
         print(f"Checking {streamer}'s record files...", end = '')
         try:
             record_files = os.listdir(f"{config.PATH}/{streamer}")
