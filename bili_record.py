@@ -30,7 +30,7 @@ while True:
             info = json.loads(resp.text)
             if "data" in info:
                 live_status = info['data']['live_status']
-                live_title = info['data']['title']
+                live_title = info['data']['title'].replace(' ', '_')
                 if live_status == 1:
                     break
             print("The stream is offline.")
