@@ -21,7 +21,7 @@ while True:
                 with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
                     streamer_config = json.loads(file.read())
                     streamer = streamer_config["OFFICIAL_NAME"]
-                if streamer in file:
+                if streamer in encode_file:
                     os.system(f"mv {config.ENCODE_PATH}/{new_file} {config.PATH}/{streamer}/{new_file}")
-                    os.system(f"rm {config.ENCODE_PATH}/{file}")
+                    os.system(f"rm {config.ENCODE_PATH}/{encode_file}")
     time.sleep(config.TRANSCODE_INTERVAL)
