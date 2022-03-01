@@ -4,51 +4,43 @@ import config
 import calendar
 import json
 
-# save exist record file for each streamer
-streamers_files = {}
+prev_config = []
 while True:
     os.system("clear")
+    # load the streamers list from a external file "streamers.txt"
     config_files = os.listdir(config.CONFIG_PATH)
     for config_file in config_files:
-        # read streamer config for each streamer
-        with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
-            streamer_config = json.loads(file.read())
-            streamer = streamer_config["OFFICIAL_NAME"]
-            drive_path = streamer_config["DRIVE"]
-            # if there is a new config
-            if streamer not in streamers_files:
-                streamers_files[streamer] = []
+        if config_file not in prev_config:
+            with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
+                streamer_config = json.loads(file.read())
+                streamer = streamer_config["OFFICIAL_NAME"]
+                drive_path = streamer_config["DRIVE"]
                 os.system(f"rclone mkdir {drive_path}/{streamer}")
-        # print previously exist files
-        print(f"Checking {streamer}'s record files...", end="")
-        print(f"{len(streamers_files[streamer])} files exist: ")
-        for filename in streamers_files[streamer]:
-            print(f"    {filename}")
-        
-        # check new files
+        print(f"Checking {streamer}'s record files...", end = '')
         try:
-            current_files = os.listdir(f"{config.PATH}/{streamer}")
+            record_files = os.listdir(f"{config.PATH}/{streamer}")
         except FileNotFoundError:
-            current_files = []
+            record_files = []
         
         # try to copy files to the cloud drive
-        for filename in current_files:
-            if filename not in streamers_files[streamer]:
-                print(f"START to copy {streamer}'s record files")
-                cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
-                os.system(cmd)
-                streamers_files[streamer].append(filename) 
+        if record_files:
+            print(f"START to copy {streamer}'s record files")
+            cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
+            fail = os.system(cmd)
+
+            # if copy successed
+            # clean old files(expiration set by config.py)
+            if not fail:
+                time_now = time.time()
+                for file in record_files:
+                    timestr = file[-len(config.TRANSCODE_FORMAT) - 16:-len(config.TRANSCODE_FORMAT) - 1]
+                    # convert to GMT (8h time gap)
+                    record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
+                    if time_now - record_time > config.EXPIRATION * 24 * 60 * 60:
+                        os.system(f"rm {config.PATH}/{streamer}/{file}")
+
         else:
             print("NOT FOUND")
-    
-        # delete old record files of current streamer(expiration loaded from config.py)
-        time_now = time.time()
-        for filename in current_files:
-            timestr = filename[-len(config.TRANSCODE_FORMAT) - 16:-len(config.TRANSCODE_FORMAT) - 1]
-            # convert to GMT (8h time gap)
-            record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
-            if time_now - record_time > config.EXPIRATION * 24 * 60 * 60:
-                os.system(f"rm {config.PATH}/{streamer}/{filename}")
-                del streamers_files[streamer].remove(filename)
             
+    prev_config = config_files
     time.sleep(config.UPLOAD_INTERVAL)
