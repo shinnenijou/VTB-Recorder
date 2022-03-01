@@ -14,7 +14,7 @@ CONFIG_PATH = f"{PATH}/config"
 RECORD_PATH = f"{PATH}/temp/record"
 ENCODE_PATH = f"{PATH}/temp/encode"
 LOG_PATH = f"{PATH}/log"
-COPIED_PATH = f"{PATH}/temp/copied"
+OFFICIAL_SERVERNAME = "1.117.32.175"
 
 # UPLOAD
 EXPIRATION = 7 # days

@@ -37,7 +37,10 @@ while True:
                 print(f"START to copy {streamer}'s record files")
                 cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
                 os.system(cmd)
-                streamers_files[streamer].append(filename) 
+                streamers_files[streamer].append(filename)
+                if "OFFICIAL_PATH" in streamer_config:
+                    os.system(f"scp {config.PATH}/{streamer} /{filename} root@{config.OFFICIAL_SERVERNAME}\
+                        :{streamer_config['OFFICIAL_PATH']}") 
     
         # delete old record files of current streamer(expiration loaded from config.py)
         time_now = time.time()
