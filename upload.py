@@ -38,8 +38,6 @@ while True:
                 cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
                 os.system(cmd)
                 streamers_files[streamer].append(filename) 
-        else:
-            print("NOT FOUND")
     
         # delete old record files of current streamer(expiration loaded from config.py)
         time_now = time.time()
