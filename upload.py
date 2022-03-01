@@ -49,6 +49,6 @@ while True:
             record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
             if time_now - record_time > config.EXPIRATION * 24 * 60 * 60:
                 os.system(f"rm {config.PATH}/{streamer}/{filename}")
-                del streamers_files[streamer].remove(filename)
+                streamers_files[streamer].remove(filename)
             
     time.sleep(config.UPLOAD_INTERVAL)
