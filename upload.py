@@ -39,8 +39,7 @@ while True:
                 os.system(cmd)
                 streamers_files[streamer].append(filename)
                 if "OFFICIAL_PATH" in streamer_config:
-                    os.system(f"scp {config.PATH}/{streamer}/{filename} root@{config.OFFICIAL_SERVERNAME}\
-                        :{streamer_config['OFFICIAL_PATH']}") 
+                    os.system(f"scp {config.PATH}/{streamer}/{filename} root@{config.OFFICIAL_SERVERNAME}:{streamer_config['OFFICIAL_PATH']}") 
     
         # delete old record files of current streamer(expiration loaded from config.py)
         time_now = time.time()
