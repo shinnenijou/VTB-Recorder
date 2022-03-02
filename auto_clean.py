@@ -1,6 +1,6 @@
 import time
 import calendar
-import os
+import tools
 import json
 from socket import *
 
@@ -23,14 +23,16 @@ def send_msg(serverName, serverPort, request, headers, data):
 
 # CONSTANT
 SERVER_NAME = "127.0.0.1"
-SERVER_PORT = 80
+SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 TRANSCODE_FORMAT = "mp4"
 EXPIRATION = 7
 LISTEN_INTERVAL = 60 * 60
+USERNAME = "admin@shinnen.cloud"
+PASSWORD = "*******"
 
 login_request = "POST /api/v3/user/session HTTP/1.1\r\n"
-login_data = '{"userName":"admin@shinnen.cloud","Password":"7A5gLduc","captchaCode":""}'
+login_data = '{"userName":"' + USERNAME + '","Password":"' + PASSWORD + '","captchaCode":""}'
 login_headers = {
     "Host": f"{SERVER_NAME}",
     "Connection": "close",
@@ -94,9 +96,7 @@ while True:
     for item in recv["data"]["items"]:
         filename = item["Name"]
         fileID = item["ID"]
-        timestr = filename[-len(TRANSCODE_FORMAT) - 16:-len(TRANSCODE_FORMAT) - 1]
-        record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
-        if time_now - record_time > EXPIRATION * 24 * 60 * 60:
+        if time_now - tools.extract_time(filename) > EXPIRATION * 24 * 60 * 60:
             delete_data = '{"id":[' + str(fileID) + "]}"
             delete_headers["Content-Length"] = f"{len(delete_data.encode())}"
             recv = send_msg(SERVER_NAME, SERVER_PORT, delete_request, delete_headers, delete_data)

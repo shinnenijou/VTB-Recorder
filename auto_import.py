@@ -17,13 +17,15 @@ def send_msg(serverName, serverPort, request, headers, data):
 
 # CONSTANT
 SERVER_NAME = "127.0.0.1"
-SERVER_PORT = 80
+SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 LISTEN_INTERVAL = 60
+USERNAME = "admin@shinnen.cloud"
+PASSWORD = "*******"
 ########## 
 
 login_request = "POST /api/v3/user/session HTTP/1.1\r\n"
-login_data = '{"userName":"admin@shinnen.cloud","Password":"7A5gLduc","captchaCode":""}'
+login_data = '{"userName":"' + USERNAME + '","Password":"' + PASSWORD + '","captchaCode":""}'
 login_headers = {
     "Host": f"{SERVER_NAME}",
     "Connection": "keep-alive",
