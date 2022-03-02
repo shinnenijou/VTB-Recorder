@@ -48,14 +48,15 @@ while True:
                 os.system(cmd)
                 streamers_files_lists[streamer_name].append(filename)
 
-                if "OFFICIAL_PATH" in streamer_config:
-                    thread = threading.Thread(
-                        target=transfer_to_remote,
-                        args=(
-                            f"{RECORD_PATH}/{streamer_name}",
-                            f"{drive_path}/{streamer_name}"
-                        )
-                    )
-                    thread.start()
+                # transfer record file to remote host if it is official record
+                # if "OFFICIAL_PATH" in streamer_config:
+                #     thread = threading.Thread(
+                #         target=transfer_to_remote,
+                #         args=(
+                #             f"{RECORD_PATH}/{streamer_name}",
+                #             f"{drive_path}/{streamer_name}"
+                #         )
+                #     )
+                #     thread.start()
             
     time.sleep(config.UPLOAD_INTERVAL)
