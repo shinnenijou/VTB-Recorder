@@ -1,54 +1,61 @@
 import os
 import time
-import config
-import calendar
+from config import *
+from tools import *
 import json
+import threading
 
 # save exist record file for each streamer
-streamers_files = {}
+streamers_files_lists = {}
 while True:
     os.system("clear")
-    config_files = os.listdir(config.CONFIG_PATH)
-    for config_file in config_files:
-        # read streamer config for each streamer
-        with open(f"{config.CONFIG_PATH}/{config_file}", 'r') as file:
+    streamers_list = os.listdir(CONFIG_PATH)
+    for streamer in streamers_list:
+        # read streamer config
+        with open(f"{CONFIG_PATH}/{streamer}", 'r') as file:
             streamer_config = json.loads(file.read())
-            streamer = streamer_config["OFFICIAL_NAME"]
-            drive_path = streamer_config["DRIVE"]
+            streamer_name = streamer_config["OFFICIAL_NAME"]
+            drive_path = streamer_config["ONEDRIVE"]
             # if there is a new config
-            if streamer not in streamers_files:
-                streamers_files[streamer] = []
-                os.system(f"rclone mkdir {drive_path}/{streamer}")
+            if streamer_name not in streamers_files_lists:
+                streamers_files_lists[streamer_name] = []
+                os.system(f"rclone mkdir {drive_path}/{streamer_name}")
         # print previously exist files
-        print(f"Checking {streamer}'s record files...", end="")
-        print(f"{len(streamers_files[streamer])} files exist: ")
-        for filename in streamers_files[streamer]:
+        print(f"Checking {streamer_name}'s record files...", end="")
+        print(f"{len(streamers_files_lists[streamer_name])} files exist: ")
+        for filename in streamers_files_lists[streamer_name]:
             print(f"    {filename}")
         
         # check new files
         try:
-            current_files = os.listdir(f"{config.PATH}/{streamer}")
+            current_files = os.listdir(f"{RECORD_PATH}/{streamer_name}")
         except FileNotFoundError:
             current_files = []
         
+        # clean old files if not official record
+        if "OFFICIAL_PATH" not in streamer_config:
+            for filename in current_files:
+                record_time = extract_time(filename)
+                if gmt8time() - record_time > EXPIRATION * 24 * 60 * 60:
+                    os.system(f"rm {RECORD_PATH}/{streamer_name}/{filename}")
+
         # try to copy files to the cloud drive
         for filename in current_files:
-            if filename not in streamers_files[streamer]:
+            if filename not in streamers_files_lists[streamer_name]:
                 print(f"START to copy {streamer}'s record files")
-                cmd = f"rclone copy --progress --max-age 1h {config.PATH}/{streamer} {drive_path}/{streamer}"
+                cmd = f"rclone copy --progress "\
+                    + f"{RECORD_PATH}/{streamer_name} {drive_path}/{streamer_name}"
                 os.system(cmd)
-                streamers_files[streamer].append(filename)
+                streamers_files_lists[streamer_name].append(filename)
+
                 if "OFFICIAL_PATH" in streamer_config:
-                    os.system(f"scp {config.PATH}/{streamer}/{filename} root@{config.OFFICIAL_SERVERNAME}:{streamer_config['OFFICIAL_PATH']}") 
-    
-        # delete old record files of current streamer(expiration loaded from config.py)
-        time_now = time.time()
-        for filename in current_files:
-            timestr = filename[-len(config.TRANSCODE_FORMAT) - 16:-len(config.TRANSCODE_FORMAT) - 1]
-            # convert to GMT (8h time gap)
-            record_time = calendar.timegm(time.strptime(timestr, "%Y%m%d_%H%M%S")) - 8 * 60 * 60
-            if time_now - record_time > config.EXPIRATION * 24 * 60 * 60:
-                os.system(f"rm {config.PATH}/{streamer}/{filename}")
-                streamers_files[streamer].remove(filename)
+                    thread = threading.Thread(
+                        target=transfer_to_remote,
+                        args=(
+                            f"{RECORD_PATH}/{streamer_name}",
+                            f"{drive_path}/{streamer_name}"
+                        )
+                    )
+                    thread.start()
             
     time.sleep(config.UPLOAD_INTERVAL)

@@ -7,7 +7,7 @@ def extract_time(filename : str) -> float:
     i = filename.rfind('.')
     # YYYYmmdd_HHMMSS.format, at least 15 chars before '.'
     if i < 15: 
-        return -1.0
+        return 3000000000
     else:
         return calendar.timegm(time.strptime(
             filename[i - 15 : i], config.TIME_FORMAT))
@@ -33,3 +33,7 @@ def transcode(path:str, save_path:str, log_path, trans_format:str)->None:
         os.system(f"rm {save_path}/{new_file}")
         # move origin file as final file
         os.system(f"mv {path} {save_path}/{path[path.rfind('/') + 1:]}")
+
+def transfer_to_remote(src, dst):
+    cmd = f"scp {src} {dst}"
+    os.system(cmd)
