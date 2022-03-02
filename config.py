@@ -6,13 +6,13 @@ TRANSCODE_INTERVAL = 30
 # FORMAT
 RECORD_FORMAT = "ts"
 TRANSCODE_FORMAT = "mp4"
+TIME_FORMAT = "%Y%m%d_%H%M%S"
 
 # PATHS
 PATH = "."
-TEMP_DIR_PATH = f"{PATH}/temp"
 CONFIG_PATH = f"{PATH}/config"
-RECORD_PATH = f"{PATH}/temp/record"
-ENCODE_PATH = f"{PATH}/temp/encode"
+RECORD_PATH = f"{PATH}/record"
+TEMP_PATH = f"{RECORD_PATH}/temp"
 LOG_PATH = f"{PATH}/log"
 OFFICIAL_SERVERNAME = "1.117.32.175"
 

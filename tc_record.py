@@ -2,60 +2,64 @@ import time
 import os
 import requests
 import json
-import config
+from config import *
+from tools import *
+import threading
 
-input = input("Enter the streamer's name you want to record: ").strip().replace(' ', '_').lower()
-
+input = input("Enter the streamer's name: ").strip().replace(' ', '_').lower()
 # read live url from a external file "{streamer}.json"
-with open(f"{config.CONFIG_PATH}/{input}.json") as file:
-    streamer_config = json.loads(file.read())
-    room_url = streamer_config["TWITCAS_URL"].strip()
-    room_id = room_url[room_url.find('/') + 1:]
-    streamer = streamer_config["OFFICIAL_NAME"]
-
+with open(f"{CONFIG_PATH}/{input}.json") as file:
+    STREAMER_CONFIG = json.loads(file.read())
+    STREAMER_NAME= STREAMER_CONFIG["OFFICIAL_NAME"]
+    ROOM_URL = STREAMER_CONFIG["TWITCAS_URL"].strip()
+    ROOM_ID = ROOM_URL[ROOM_URL.rfind('/') + 1:]
+    FINAL_PATH = f"{RECORD_PATH}/{STREAMER_NAME}"
 # mkdir
-os.system(f"mkdir {streamer}")
-os.system(f"mkdir {config.TEMP_DIR_PATH}")
-os.system(f"mkdir {config.ENCODE_PATH}")
-os.system(f"mkdir {config.RECORD_PATH}")
-
-API = config.TWITCAS_API(room_id)
+os.system(f"mkdir {RECORD_PATH}")
+os.system(f"mkdir {RECORD_PATH}/{STREAMER_NAME}")
+os.system(f"mkdir {TEMP_PATH}")
+os.system(f"mkdir {LOG_PATH}")
+os.system(f"mkdir {LOG_PATH}/{STREAMER_NAME}")
+# fetch API to listen live status
+API = TWITCAS_API(ROOM_ID)
 while True:
     # get live info from twitcasting api
     while True:
         os.system("clear")
         # set password if exists
-        with open(f"{config.CONFIG_PATH}/{input}.json") as file:
-            streamer_config = json.loads(file.read())
-            pw = streamer_config["TWITCAS_PASSWORD"]
-        if pw:
-            print(f"Detect the password: {pw}")
-            pw = f"--twitcasting-password {pw}"
+        with open(f"{CONFIG_PATH}/{input}.json") as file:
+            pswd = json.loads(file.read())["TWITCAS_PASSWORD"]
+        if pswd:
+            print(f"Detect the password: {pswd}")
+            pswd = f"--twitcasting-password {pswd}"
 
         # Listen the stream status    
-        print(room_url)
-        print(streamer)
+        print(ROOM_URL)
+        print(STREAMER_NAME)
         try:
-            resp = requests.get(API, headers=config.HEADERS)
-            resp.encoding = "UTF-8"
-            info = json.loads(resp.text)
-            if "movie" in info:
-                live_status = info['movie']['live']
-                if live_status:
+            resp = requests.get(API, headers=HEADERS)
+            live_info = json.loads(resp.text)
+            if "movie" in live_info:
+                status = live_info['movie']['live']
+                if status:
                     break
             print("The stream is offline.")
         except Exception as e:
-            time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-            with open(f"{config.LOG_PATH}/tc_{room_id}.log", 'a') as log_file:
-                log_file.write(f"Error Occurs at {time_stamp}: {str(e)}\r\n")
-
-        time.sleep(config.LISTEN_INTERVAL)
+            with open(f"{LOG_PATH}/tc_{STREAMER_NAME}.log", 'a') as file:
+                file.write(f"Error Occurs at {gmt8time()}: {str(e)}\r\n")
+        time.sleep(LISTEN_INTERVAL)
         
-
     # record stream
     os.system("clear")
-    print(f"Start to record the stream: {streamer} from twitcasting.tv")
-    time_stamp = time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time() + 8 * 60 * 60))
-    file_name = f"{streamer}_{time_stamp}.{config.RECORD_FORMAT}"
-    os.system(f"streamlink {room_url} best {pw} -o {config.RECORD_PATH}/{file_name}")
-    os.system(f"mv {config.RECORD_PATH}/{file_name} {config.ENCODE_PATH}/{file_name}")
+    print(f"Start to record the stream: {STREAMER_NAME} from twitcasting.tv")
+    filename = f"{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
+    os.system(f"streamlink {ROOM_URL} best {pswd} -o {TEMP_PATH}/{filename}")
+
+    # transcode after recording done
+    thread = threading.Thread(
+        target=transcode,
+        args=(f"{TEMP_PATH}/{filename}", 
+              FINAL_PATH, f"{LOG_PATH}/{STREAMER_NAME}",
+              TRANSCODE_FORMAT)
+    )
+    thread.start()
