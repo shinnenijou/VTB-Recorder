@@ -24,7 +24,7 @@ def send_msg(serverName, serverPort, request, headers, data):
 # CONSTANT
 SERVER_NAME = "127.0.0.1"
 SERVER_PORT = 80
-FILES_PATH = "/home/mycloud/uploads/2/record"
+FILES_PATH = "/www/mycloud/uploads/2/record"
 TRANSCODE_FORMAT = "mp4"
 EXPIRATION = 7
 LISTEN_INTERVAL = 60 * 60
