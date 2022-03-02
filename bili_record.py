@@ -20,7 +20,10 @@ os.system(f"mkdir {RECORD_PATH}")
 os.system(f"mkdir {RECORD_PATH}/{STREAMER_NAME}")
 os.system(f"mkdir {TEMP_PATH}")
 os.system(f"mkdir {LOG_PATH}")
-os.system(f"mkdir {LOG_PATH}/{STREAMER_NAME}")
+os.system(f"mkdir {RECORD_LOG_PATH}")
+os.system(f"mkdir {RECORD_LOG_PATH}/{STREAMER_NAME}")
+os.system(f"mkdir {TRANS_LOG_PATH}")
+os.system(f"mkdir {TRANS_LOG_PATH}/{STREAMER_NAME}")
 # fetch API to listen live status
 API = BILI_API(ROOM_ID)
 while True:
@@ -39,7 +42,7 @@ while True:
                     break
             print("The stream is offline.")
         except Exception as e:
-            with open(f"{LOG_PATH}/bili_{STREAMER_NAME}.log", 'a') as file:
+            with open(f"{RECORD_LOG_PATH}/{STREAMER_NAME}/errors.log", 'a') as file:
                 file.write(f"Error Occurs at {gmt8time()}: {str(e)}\r\n")
         time.sleep(LISTEN_INTERVAL)
 
@@ -47,13 +50,17 @@ while True:
     os.system("clear")
     print(f"Start to record the stream: {STREAMER_NAME} from bilibili.com")
     filename = f"{title}_{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
-    os.system(f"streamlink {ROOM_URL} best -o {TEMP_PATH}/{filename}")
+    cmd = f"streamlink {ROOM_URL} best "\
+        + f"-l trace "\
+        + f"--logfile {RECORD_LOG_PATH}/{STREAMER_NAME}/{filename[:filename.rfind('.')]}.log "\
+        + f"-o {TEMP_PATH}/{filename}"
+    os.system(cmd)
 
     # transcode after recording done
     thread = threading.Thread(
         target=transcode,
         args=(f"{TEMP_PATH}/{filename}", 
-              FINAL_PATH, f"{LOG_PATH}/{STREAMER_NAME}",
+              FINAL_PATH, f"{TRANS_LOG_PATH}/{STREAMER_NAME}",
               TRANSCODE_FORMAT)
     )
     thread.start()
