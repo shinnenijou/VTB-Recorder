@@ -36,7 +36,7 @@ while True:
         if "OFFICIAL_PATH" not in streamer_config:
             for filename in current_files:
                 record_time = extract_time(filename)
-                if gmt8time() - record_time > EXPIRATION * 24 * 60 * 60:
+                if time.time() + 8 * 60 * 60 - record_time > EXPIRATION * 24 * 60 * 60:
                     os.system(f"rm {RECORD_PATH}/{streamer_name}/{filename}")
 
         # try to copy files to the cloud drive

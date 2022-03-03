@@ -92,16 +92,16 @@ while True:
 
     # process receive data
     recv = json.loads(recv[recv.find("\r\n{") + 2 : recv.find("\r\n0\r\n")])
-    time_now = time.time()
     for item in recv["data"]["items"]:
         filename = item["Name"]
         fileID = item["ID"]
+        time_now = time.time() + 8 * 60 * 60
         if time_now - tools.extract_time(filename) > EXPIRATION * 24 * 60 * 60:
             delete_data = '{"id":[' + str(fileID) + "]}"
             delete_headers["Content-Length"] = f"{len(delete_data.encode())}"
             recv = send_msg(SERVER_NAME, SERVER_PORT, delete_request, delete_headers, delete_data)
             with open("clean.log", "a") as file:
-                log = f"{time.asctime(time.gmtime(time_now+8*60*60))}: {filename} deleted\r\n"
+                log = f"{time.asctime(time.gmtime(time_now))}: {filename} deleted\r\n"
                 print(log, end = "")
                 file.write(log)
     time.sleep(LISTEN_INTERVAL)
