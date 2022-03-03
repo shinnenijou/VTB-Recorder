@@ -21,7 +21,7 @@ SERVER_NAME = "127.0.0.1"
 SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 LISTEN_INTERVAL = 60
-USERNAME = "admin@shinnen.cloud"
+USERNAME = "*******"
 PASSWORD = "*******"
 ########## 
 

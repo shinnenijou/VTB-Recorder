@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import time
-import calendar
 import tools
 import json
 from socket import *
@@ -27,9 +26,9 @@ SERVER_NAME = "127.0.0.1"
 SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 TRANSCODE_FORMAT = "mp4"
-EXPIRATION = 7
+EXPIRATION = 3
 LISTEN_INTERVAL = 60 * 60
-USERNAME = "admin@shinnen.cloud"
+USERNAME = "*******"
 PASSWORD = "*******"
 
 login_request = "POST /api/v3/user/session HTTP/1.1\r\n"
