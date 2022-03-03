@@ -4,7 +4,7 @@ import time
 from config import *
 from tools import *
 import json
-
+os.system(f"mkdir {LOG_PATH}")
 os.system(f"mkdir {UPLOAD_LOG_PATH}")
 # save exist record file for each streamer
 streamers_files_lists = {}

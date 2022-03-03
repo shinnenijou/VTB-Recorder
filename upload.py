@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 import time
 from config import *
@@ -5,6 +6,7 @@ from tools import *
 import json
 
 # save exist record file for each streamer
+os.system(f"mkdir {LOG_PATH}")
 os.system(f"mkdir {UPLOAD_LOG_PATH}")
 streamers_files_lists = {}
 while True:

@@ -5,14 +5,14 @@ After=network.target
 Wants=network.target
 
 [Service]
-WorkingDirectory=/PATH_TO_RECORDER
-ExecStart=/PATH_TO_RECORDER/systemd_service_upload.py
+WorkingDirectory=/home/VTB-Recorder
+ExecStart=/home/VTB-Recorder/upload.py
 Restart=on-abnormal
 RestartSec=5s
 KillMode=mixed
 
-StandardOutput=file:/PATH_TO_LOG/sysoutputs
-StandardError=file:/PATH_TO_LOG/syserrors
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target
