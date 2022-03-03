@@ -6,8 +6,7 @@ Wants=network.target
 
 [Service]
 WorkingDirectory=/home/VTB-Recorder
-ExecStart=/home/VTB-Recorder/bili_record.py
-ExecStartPost=aria
+ExecStart=/home/VTB-Recorder/bili_record.py aria
 Restart=on-abnormal
 RestartSec=5s
 KillMode=mixed
