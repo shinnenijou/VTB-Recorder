@@ -5,8 +5,8 @@ After=network.target
 Wants=network.target
 
 [Service]
-WorkingDirectory=/home/VTB-Recorder
-ExecStart=/home/VTB-Recorder/tc_record.py mitagun
+WorkingDirectory=/PATH_TO_RECORDER
+ExecStart=/PATH_TO_RECORDER/tc_record.py mitagun
 Restart=on-abnormal
 RestartSec=5s
 KillMode=mixed

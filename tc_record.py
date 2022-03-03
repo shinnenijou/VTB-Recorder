@@ -8,7 +8,7 @@ from config import *
 from tools import *
 import threading
 
-input = sys.argv[1]
+input = sys.argv[-1]
 # read live url from a external file "{streamer}.json"
 with open(f"{CONFIG_PATH}/{input}.json") as file:
     STREAMER_CONFIG = json.loads(file.read())
