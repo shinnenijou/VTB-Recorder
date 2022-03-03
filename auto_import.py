@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from socket import *
 import os
 import time
