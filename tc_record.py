@@ -59,8 +59,7 @@ while True:
     print(f"Start to record the stream: {STREAMER_NAME} from twitcasting.tv")
     filename = f"{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
     cmd = f"streamlink {ROOM_URL} best "\
-        + f"-l trace "\
-        + f"--logfile {RECORD_LOG_PATH}/{STREAMER_NAME}/{filename[:filename.rfind('.')]}.log "\
+        + f"--twitcasting-password {pswd} "\
         + f"-o {TEMP_PATH}/{filename}"
     os.system(cmd)
 

@@ -53,8 +53,6 @@ while True:
     print(f"Start to record the stream: {STREAMER_NAME} from bilibili.com")
     filename = f"{title}_{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
     cmd = f"streamlink {ROOM_URL} best "\
-        + f"-l trace "\
-        + f"--logfile {RECORD_LOG_PATH}/{STREAMER_NAME}/{filename[:filename.rfind('.')]}.log "\
         + f"-o {TEMP_PATH}/{filename}"
     os.system(cmd)
 
