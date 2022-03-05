@@ -2,6 +2,7 @@
 import time
 import tools
 import json
+import sys
 from socket import *
 
 def send_msg(serverName, serverPort, request, headers, data):
@@ -28,8 +29,8 @@ FILES_PATH = "/www/mycloud/uploads/2/record"
 TRANSCODE_FORMAT = "mp4"
 EXPIRATION = 3
 LISTEN_INTERVAL = 60 * 60
-USERNAME = "*******"
-PASSWORD = "*******"
+USERNAME = sys.argv[-2]
+PASSWORD = sys.argv[-1]
 
 login_request = "POST /api/v3/user/session HTTP/1.1\r\n"
 login_data = '{"userName":"' + USERNAME + '","Password":"' + PASSWORD + '","captchaCode":""}'

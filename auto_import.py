@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from socket import *
+import sys
 import os
 import time
 
@@ -21,8 +22,8 @@ SERVER_NAME = "127.0.0.1"
 SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 LISTEN_INTERVAL = 60
-USERNAME = "*******"
-PASSWORD = "*******"
+USERNAME = sys.argv[-2]
+PASSWORD = sys.argv[-1]
 ########## 
 
 login_request = "POST /api/v3/user/session HTTP/1.1\r\n"
