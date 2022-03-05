@@ -3,6 +3,7 @@ import time
 import tools
 import json
 import sys
+import config
 from socket import *
 
 def send_msg(serverName, serverPort, request, headers, data):
@@ -27,7 +28,7 @@ SERVER_NAME = "127.0.0.1"
 SERVER_PORT = 5212
 FILES_PATH = "/www/mycloud/uploads/2/record"
 TRANSCODE_FORMAT = "mp4"
-EXPIRATION = 3
+EXPIRATION = config.AUTO_CLEAN
 LISTEN_INTERVAL = 60 * 60
 USERNAME = sys.argv[-2]
 PASSWORD = sys.argv[-1]
