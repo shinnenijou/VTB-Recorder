@@ -59,8 +59,7 @@ while True:
     # transcode after recording done
     thread = threading.Thread(
         target=transcode,
-        args=(f"{TEMP_PATH}/{filename}", 
-              FINAL_PATH, f"{TRANS_LOG_PATH}/{STREAMER_NAME}",
-              TRANSCODE_FORMAT)
+        args=(filename, TRANSCODE_FORMAT,
+            TEMP_PATH, FINAL_PATH, f'{TRANS_LOG_PATH}/{STREAMER_NAME}')
     )
     thread.start()
