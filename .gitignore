@@ -3,3 +3,5 @@
 __pycache__/config.cpython-39.pyc
 test.py
 *.pyc
+*.json
+*.service
