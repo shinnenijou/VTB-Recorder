@@ -59,7 +59,7 @@ while True:
     print(f"Start to record the stream: {STREAMER_NAME} from twitcasting.tv")
     filename = f"{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
     cmd = f"streamlink {ROOM_URL} best "\
-        + f"{pswd}"\
+        + f"{pswd} "\
         + f"-o {TEMP_PATH}/{filename}"
     os.system(cmd)
 
