@@ -26,7 +26,7 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
     # clean old file after transcode done
     if not status:
         # delete origin file
-        os.system(f"mv {path}/{filename} {new_path}/{new_file}")
+        os.system(f"mv {path}/{new_file} {new_path}/{new_file}")
         os.system(f"rm {path}/{filename}")
     else:
         # delete failed transcode file
