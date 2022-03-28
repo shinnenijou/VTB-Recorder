@@ -20,9 +20,18 @@ def gmt8time(secs:float=None) -> str:
 def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path : str)->None:
     # transcode
     new_file = f"{filename.rpartition('.')[0]}.{trans_format}"
+
     cmd = f"ffmpeg -i {path}/{filename} -y -c:v copy -c:a copy {path}/{new_file}"\
         + f">{log_path}/{filename.rpartition('.')[0]}.log 2>&1"
     status = os.system(cmd)
+    #########
+    # 提取音频(初配信临时功能)
+    audio_file = f"{filename.rpartition('.')[0]}.wav"
+    cmd = f"ffmpeg -i {path}/{filename} -y -c:a copy {path}/{audio_file}"
+    status = os.system(cmd)
+    if not status:
+        os.system(f"mv {path}/{audio_file} {new_path}/{audio_file}")
+    ########
     # clean old file after transcode done
     if not status:
         # delete origin file
