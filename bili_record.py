@@ -9,14 +9,13 @@ from tools import *
 import threading
 
 input = sys.argv[-1]
+# read live url from a external file "{streamer}.json"
 with open(f"{CONFIG_PATH}/{input}.json") as file:
     STREAMER_CONFIG = json.loads(file.read())
     STREAMER_NAME = STREAMER_CONFIG["OFFICIAL_NAME"]
     ROOM_URL = STREAMER_CONFIG["BILI_URL"].strip()
     ROOM_ID = ROOM_URL[ROOM_URL.rfind('/') + 1:]
     FINAL_PATH = f"{RECORD_PATH}/{STREAMER_NAME}"
-    if "OFFICIAL_PATH" in STREAMER_CONFIG:
-        FINAL_PATH = STREAMER_CONFIG["OFFICIAL_PATH"]
 # mkdir
 os.system(f"mkdir {RECORD_PATH}")
 os.system(f"mkdir {RECORD_PATH}/{STREAMER_NAME}")
@@ -35,7 +34,7 @@ while True:
             os.system("clear")
             print(ROOM_ID)
             print(STREAMER_NAME)
-            resp = requests.get(API, config.HEADERS)
+            resp = requests.get(API, HEADERS)
             live_info = json.loads(resp.text)
             if "data" in live_info:
                 status = live_info['data']['live_status']
@@ -52,9 +51,8 @@ while True:
     os.system("clear")
     print(f"Start to record the stream: {STREAMER_NAME} from bilibili.com")
     filename = f"{title}_{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
-    cmd = f"streamlink {ROOM_URL} best "\
-        + f"-o {TEMP_PATH}/{filename}"
-    os.system(cmd)
+    options = ['streamlink', ROOM_URL, 'best', f'-o {TEMP_PATH}/{filename}']
+    os.system(' '.join(option for option in options))
 
     # transcode after recording done
     thread = threading.Thread(
