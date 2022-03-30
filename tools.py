@@ -26,7 +26,7 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
     status = os.system(cmd)
     #########
     # 提取音频(初配信临时功能)
-    audio_file = f"{filename.rpartition('.')[0]}.wav"
+    audio_file = f"{filename.rpartition('.')[0]}.acc"
     cmd = f"ffmpeg -i {path}/{filename} -y -c:a copy {path}/{audio_file}"
     status = os.system(cmd)
     if not status:
