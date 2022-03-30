@@ -5,3 +5,5 @@ test.py
 *.pyc
 *.json
 *.service
+auto_import.py
+auto_clean.py
