@@ -26,23 +26,29 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
     status = os.system(cmd)
     #########
     # 提取音频(初配信临时功能)
-    audio_file = f"{filename.rpartition('.')[0]}.mp3"
-    cmd = f"ffmpeg -i {path}/{filename} -y {path}/{audio_file}"
-    status = os.system(cmd)
-    if not status:
-        os.system(f"mv {path}/{audio_file} {new_path}/{audio_file}")
+    #audio_file = f"{filename.rpartition('.')[0]}.mp3"
+    #cmd = f"ffmpeg -i {path}/{filename} -y {path}/{audio_file}"
+    #status = os.system(cmd)
+    #if not status:
+    #    os.system(f"mv {path}/{audio_file} {new_path}/{audio_file}")
     ########
     # clean old file after transcode done
     if not status:
         # delete origin file
         os.system(f"mv {path}/{new_file} {new_path}/{new_file}")
         os.system(f"rm {path}/{filename}")
+        return new_file
     else:
         # delete failed transcode file
         os.system(f"rm {path}/{new_file}")
         # move origin file as final file
         os.system(f"mv {path}/{filename} {new_path}/{filename}")
+        return filename
 
 def transfer_to_remote(src, dst):
     cmd = f"scp {src} {dst}"
+    os.system(cmd)
+
+def upload_baidu(path, filename, target_path):
+    cmd = f'BaiduPCS-Go upload {path}/{filename} {target_path}'
     os.system(cmd)

@@ -7,3 +7,4 @@ test.py
 *.service
 auto_import.py
 auto_clean.py
+miriya_record.py

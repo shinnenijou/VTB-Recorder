@@ -50,7 +50,7 @@ while True:
     # record stream
     os.system("clear")
     print(f"Start to record the stream: {STREAMER_NAME} from bilibili.com")
-    filename = f"{title}_{STREAMER_NAME}_{gmt8time()}.{RECORD_FORMAT}"
+    filename = f"{gmt8time()}_{title}_{STREAMER_NAME}.{RECORD_FORMAT}"
     options = ['streamlink', ROOM_URL, 'best', f'-o {TEMP_PATH}/{filename}']
     os.system(' '.join(option for option in options))
 
