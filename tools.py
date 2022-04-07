@@ -9,8 +9,8 @@ def extract_time(filename : str) -> float:
     if i < 15: 
         return 3000000000
     else:
-        return calendar.timegm(time.strptime(
-            filename[i - 15 : i], config.TIME_FORMAT))
+        #return calendar.timegm(time.strptime(filename[i - 15 : i], config.TIME_FORMAT))
+        return calendar.timegm(time.strptime(filename[:15], config.TIME_FORMAT))
 
 def gmt8time(secs:float=None) -> str:
     if not secs:
