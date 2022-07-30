@@ -34,13 +34,6 @@ while True:
         except FileNotFoundError:
             current_files = []
         
-        # clean old files if not official record
-        if "OFFICIAL_PATH" not in streamer_config:
-            for filename in current_files:
-                record_time = extract_time(filename)
-                if time.time() + 8 * 60 * 60 - record_time > EXPIRATION * 24 * 60 * 60:
-                    os.system(f"rm {RECORD_PATH}/{streamer_name}/{filename}")
-
         # try to copy files to the cloud drive
         for filename in current_files:
             if filename not in streamers_files_lists[streamer_name]:
@@ -50,15 +43,10 @@ while True:
                 os.system(cmd)
                 streamers_files_lists[streamer_name].append(filename)
 
-                # transfer record file to remote host if it is official record
-                # if "OFFICIAL_PATH" in streamer_config:
-                #     thread = threading.Thread(
-                #         target=transfer_to_remote,
-                #         args=(
-                #             f"{RECORD_PATH}/{streamer_name}",
-                #             f"{drive_path}/{streamer_name}"
-                #         )
-                #     )
-                #     thread.start()
-            
+        if "OFFICIAL_PATH" not in streamer_config:
+            for filename in current_files:
+                record_time = extract_time(filename)
+                if time.time() + 8 * 60 * 60 - record_time > EXPIRATION * 24 * 60 * 60:
+                    os.system(f"rm {RECORD_PATH}/{streamer_name}/{filename}")
+
     time.sleep(config.UPLOAD_INTERVAL)
