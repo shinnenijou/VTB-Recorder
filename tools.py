@@ -21,7 +21,7 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
     # transcode
     new_file = f"{filename.rpartition('.')[0]}.{trans_format}"
 
-    cmd = f"ffmpeg -i {path}/{filename} -vsync cfr -x264opts force-cfr=1 -y -c:v copy -c:a libx264 {path}/{new_file}"\
+    cmd = f"ffmpeg -i {path}/{filename} -y -c:v copy -c:a copy {path}/{new_file}"\
         + f">{log_path}/{filename.rpartition('.')[0]}.log 2>&1"
     status = os.system(cmd)
     #########
