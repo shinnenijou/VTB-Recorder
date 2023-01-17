@@ -18,6 +18,7 @@ RECORD_LOG_PATH = f"{LOG_PATH}/record"
 TRANS_LOG_PATH = f"{LOG_PATH}/transcode"
 UPLOAD_LOG_PATH = f"{LOG_PATH}/upload"
 OFFICIAL_SERVERNAME = "124.221.163.165"
+BIN_PATH = f"{PATH}/venv/bin"
 
 # UPLOAD
 EXPIRATION = 2 # days

@@ -21,13 +21,13 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
     # transcode
     new_file = f"{filename.rpartition('.')[0]}.{trans_format}"
 
-    cmd = f"ffmpeg -i {path}/{filename} -y -c:v copy -c:a copy {path}/{new_file}"\
+    cmd = f"{config.BIN_PATH}/ffmpeg -i {path}/{filename} -y -c:v copy -c:a copy {path}/{new_file}"\
         + f">{log_path}/{filename.rpartition('.')[0]}.log 2>&1"
     status = os.system(cmd)
     #########
     # 提取音频(初配信临时功能)
     #audio_file = f"{filename.rpartition('.')[0]}.mp3"
-    #cmd = f"ffmpeg -i {path}/{filename} -y {path}/{audio_file}"
+    #cmd = f"{config.BIN_PATH}/ffmpeg -i {path}/{filename} -y {path}/{audio_file}"
     #status = os.system(cmd)
     #if not status:
     #    os.system(f"mv {path}/{audio_file} {new_path}/{audio_file}")

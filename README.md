@@ -14,7 +14,3 @@ TODO: 加入Youtube录制
 
 3. 上传部分依赖`rclone`, 下载对应平台已编译的二进制文件即可, 见[RCLONE](https://rclone.org/downloads/)
 下载后需要完成drive账号的配置，详细步骤说明在[RCLONE](https://rclone.org/overview/)查阅网盘供应商对应的说明
-
-# 两个特别脚本: auto_clean, auto_import
-本身和录像机功能无关，用于配合本地cloudreve更新本地存储用, socket手动实现，不需要第三方依赖
-WARNING: 文件路径硬编码在代码中，需要根据实际需要进行更改
