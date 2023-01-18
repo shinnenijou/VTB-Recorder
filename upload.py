@@ -2,7 +2,7 @@
 import os
 import time
 from config import *
-from tools import *
+from utils import *
 import json
 
 # save exist record file for each streamer

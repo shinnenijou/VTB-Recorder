@@ -2,6 +2,43 @@ import time
 import calendar
 import config
 import os
+from enum import IntEnum
+
+# API
+def twicas_api(room_id):
+    return f"https://twitcasting.tv/streamserver.php?target={room_id}&mode=client"
+def bili_api(room_id):
+    return f"https://api.live.bilibili.com/room/v1/Room/get_info?room_id={room_id}&from=room"
+
+class StreamType(IntEnum):
+    none = 0
+    bilibili = 1
+    twitcast = 2
+
+class StreamStatus(IntEnum):
+    none = 0
+    online = 1
+    offline = 2
+
+def get_type(url: str):
+    if 'bilibili' in url:
+        return StreamType.bilibili
+    elif 'twitcast' in url:
+        return StreamType.twitcast
+
+    return StreamType.none
+
+def get_api(type: StreamType, id: str):
+    api_map = {
+        StreamType.none: None,
+        StreamType.bilibili: bili_api,
+        StreamType.twitcast: twicas_api
+    }
+    if api_map[type]:
+        return api_map[type](id)
+
+    return ""
+
 def extract_time(filename : str) -> float:
     # extract timestamp from a given filename to GMT+8 time zone
     i = filename.rfind('.')
@@ -52,3 +89,15 @@ def transfer_to_remote(src, dst):
 def upload_baidu(path, filename, target_path):
     cmd = f'BaiduPCS-Go upload {path}/{filename} {target_path}'
     os.system(cmd)
+
+def Mkdir(path):
+    try:
+        os.mkdir(path)
+    except FileExistsError:
+        pass
+
+# dir init
+def dir_init():
+    Mkdir(config.RECORD_PATH)
+    Mkdir(config.TEMP_PATH)
+    Mkdir(config.LOG_PATH)
