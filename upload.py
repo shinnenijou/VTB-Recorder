@@ -40,13 +40,12 @@ while True:
                 print(f"START to copy {streamer}'s record files")
                 cmd = f"rclone copy --progress "\
                     + f"{RECORD_PATH}/{streamer_name} {drive_path}/{streamer_name}"
-                os.system(cmd)
+                status = os.system(cmd)
                 streamers_files_lists[streamer_name].append(filename)
 
-        if "OFFICIAL_PATH" not in streamer_config:
+        # delete copied files if successfully copied
+        if status == 0:
             for filename in current_files:
-                record_time = extract_time(filename)
-                if time.time() + 8 * 60 * 60 - record_time > EXPIRATION * 24 * 60 * 60:
-                    os.system(f"rm {RECORD_PATH}/{streamer_name}/{filename}")
-
+                os.remove(f"{RECORD_PATH}/{streamer_name}/{filename}")
+                
     time.sleep(config.UPLOAD_INTERVAL)
