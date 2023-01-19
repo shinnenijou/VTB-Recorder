@@ -4,11 +4,14 @@ import time
 import config
 import utils
 import json
+from loguru import logger
 
 # save exist record file for each streamer
 utils.dir_init()
+utils.Mkdir(config.UPLOAD_LOG_PATH)
 streamers_files_lists = {}
-
+logger.add(f"{config.UPLOAD_LOG_PATH}" + "/runtime_{time}.log", encoding='utf-8',
+            rotation='1 week', retention='1 month')
 # main loop
 while True:
     os.system("clear")
@@ -33,16 +36,17 @@ while True:
         current_files = utils.Listdir(f"{config.RECORD_PATH}/{streamer_name}")
         
         # try to copy files to the cloud drive
-        status = 0
         for filename in current_files:
-            print(f"START to copy {streamer}'s record files")
+            print()
             if filename not in streamers_files_lists[streamer_name]:
+                logger.info(f"START copying {streamer}/{filename}")
                 src_path = f"{config.RECORD_PATH}/{streamer_name}/{filename}"
                 dest_path = f"{drive_path}/{streamer_name}/{filename}"
                 status = utils.Rclone.copyto(src_path, dest_path)
                 
                 # delete copied files if successfully copied
                 if status == 0:
+                    logger.success(f"{streamer}/{filename} copied")
                     streamers_files_lists[streamer_name].append(filename)
                     os.remove(src_path)
                 
