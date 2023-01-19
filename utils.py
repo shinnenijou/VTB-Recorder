@@ -82,10 +82,6 @@ def transcode(filename:str, trans_format:str, path:str, new_path:str, log_path :
         os.system(f"mv {path}/{filename} {new_path}/{filename}")
         return filename
 
-def transfer_to_remote(src, dst):
-    cmd = f"scp {src} {dst}"
-    os.system(cmd)
-
 def upload_baidu(path, filename, target_path):
     cmd = f'BaiduPCS-Go upload {path}/{filename} {target_path}'
     os.system(cmd)
@@ -96,8 +92,39 @@ def Mkdir(path):
     except FileExistsError:
         pass
 
+def Listdir(path):
+    try:
+        current_files = os.listdir(path)
+    except FileNotFoundError:
+        current_files = []
+
+    return current_files
+
+def streamlink(url, filename, **kwarg) -> int:
+    cmd = ' '.join(['streamlink', url, 'best'])
+    for option, value in kwarg.items():
+        cmd = ' '.join([cmd, f'--{option}', value])
+
+    cmd = ' '.join([cmd, '-o', filename])
+    return os.system(cmd)
+
+class Rclone:
+    @classmethod
+    def copyto(self, src_path, dest_path, **kwarg):
+        cmd = ' '.join(['rclone copyto', src_path, dest_path])
+        for option, value in kwarg.items():
+            cmd = ' '.join([cmd, f'--{option}', value])
+    
+        return os.system(cmd)
+    
+    @classmethod
+    def mkdir(self, dest_path):
+        return os.system(f"rclone mkdir {dest_path}")
+
+
 # dir init
 def dir_init():
     Mkdir(config.RECORD_PATH)
     Mkdir(config.TEMP_PATH)
     Mkdir(config.LOG_PATH)
+    Mkdir(config.CONFIG_PATH)
