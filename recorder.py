@@ -32,16 +32,16 @@ class Recorder(metaclass = ABCMeta):
         utils.Mkdir(self.__record_path)
         utils.Mkdir(self.__log_path)
 
-    def get_streamer(self):
+    def get_streamer(self) -> str:
         return self.__streamer
 
-    def get_url(self):
+    def get_url(self) -> str:
         return self.__url
 
-    def get_record_path(self):
+    def get_record_path(self) -> str:
         return self.__record_path
 
-    def get_log_path(self):
+    def get_log_path(self) -> str:
         return self.__log_path
 
     def listen(self) -> str:
@@ -78,27 +78,27 @@ class Recorder(metaclass = ABCMeta):
             
             time.sleep(config.LISTEN_INTERVAL)
 
-    def record(self, filename):
+    def record(self, path) -> None:
         self.__logger.info(f"Start to record the stream: {self.__streamer}")
         options = ['streamlink', self.__url, 'best',
-                   '-o', f'{config.TEMP_PATH}/{filename}']
+                   '-o', path]
         self.add_options(options)
         os.system(' '.join(option for option in options))
 
     @abstractmethod
-    def check_resp(self, body):
+    def check_resp(self, body) -> bool:
         pass
 
     @abstractmethod
-    def get_live_status(self, body):
+    def get_live_status(self, body) -> utils.StreamStatus:
         pass
 
     @abstractmethod
-    def get_live_title(self, body):
+    def get_live_title(self, body) -> str:
         pass
 
     @abstractmethod
-    def add_options(self, options:list):
+    def add_options(self, options:list) -> None:
         pass
 
 class BiliRecorder(Recorder):
@@ -149,7 +149,7 @@ class TwiCasRecorder(Recorder):
         options.insert(2, "--twitcasting-password")
         options.insert(3, self.__password)
 
-def create_recorder(config):
+def create_recorder(config) -> Recorder:
     stream_type = utils.get_type(config['URL'])
     return recorder_map[stream_type](config)
 

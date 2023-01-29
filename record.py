@@ -27,12 +27,16 @@ while True:
 
     # record stream
     filename = f"{utils.gmt8time()}_{title}_{recorder.get_streamer()}.{config.RECORD_FORMAT}"
-    recorder.record(filename)
+    path = f'{config.TEMP_PATH}/{filename}'
+    recorder.record(path)
 
-    # transcode after recording done
-    thread = threading.Thread(
-        target=utils.transcode,
-        args=(filename, config.TRANSCODE_FORMAT,
-            config.TEMP_PATH, recorder.get_record_path(), recorder.get_log_path())
-    )
-    thread.start()
+    if os.path.getsize(path) >= (1 << 20):
+        # transcode after recording done
+        thread = threading.Thread(
+            target=utils.transcode,
+            args=(filename, config.TRANSCODE_FORMAT,
+                config.TEMP_PATH, recorder.get_record_path(), recorder.get_log_path())
+        )
+        thread.start()
+    else:
+        os.remove(path)
