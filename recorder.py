@@ -146,8 +146,8 @@ class TwiCasRecorder(Recorder):
         if not self.__password:
             return
         
-        options.insert(2, "--twitcasting-password")
-        options.insert(3, self.__password)
+        options.insert(3, "--twitcasting-password")
+        options.insert(4, self.__password)
 
 def create_recorder(config) -> Recorder:
     stream_type = utils.get_type(config['URL'])
