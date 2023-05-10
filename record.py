@@ -30,6 +30,9 @@ while True:
     path = f'{config.TEMP_PATH}/{filename}'
     recorder.record(path)
 
+    if not os.path.isfile(path):
+        continue
+
     if os.path.getsize(path) >= (1 << 20):
         # transcode after recording done
         thread = threading.Thread(
