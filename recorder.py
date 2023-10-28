@@ -5,6 +5,7 @@ import requests
 from loguru import logger
 import time
 import utils
+import subprocess
 from abc import ABCMeta, abstractmethod
 
 class Recorder(metaclass = ABCMeta):
@@ -45,26 +46,25 @@ class Recorder(metaclass = ABCMeta):
         return self.__log_path
 
     def listen(self) -> str:
+        
         while True:
+            if os.system(f'curl -o "{self.__id}_resp.json" "{self.__api}"') != 0:
+                self.__logger.error(f"Requests Response Error")
+                time.sleep(config.LISTEN_INTERVAL)
+                continue
+
+            with open(f'{self.__id}_resp.json', 'r', encoding='utf-8') as file:
+                text = file.read()
+
+            os.remove(f'{self.__id}_resp.json')
+
             try:
-                resp = requests.get(self.__api, config.HEADERS)
-            except (requests.ConnectTimeout, requests.ConnectionError) as e:
-                self.__logger.error(f"Requests Connection Error: {str(e)}")
+                live_info = json.loads(text)
+            except Exception as e:
+                self.__logger.error(f"Requests Response Error, status code: {str(e)}")
                 time.sleep(config.LISTEN_INTERVAL)
                 continue
 
-            if resp.status_code != 200:
-                self.__logger.error(
-                    f"Requests Response Error, status code: {resp.status_code}")
-                time.sleep(config.LISTEN_INTERVAL)
-                continue
-
-            if not resp.text:
-                self.__logger.error(f"Requests Response Error, no text")
-                time.sleep(config.LISTEN_INTERVAL)
-                continue
-
-            live_info = json.loads(resp.text)
             if not self.check_resp(live_info):
                 self.__logger.error("Response body error")
                 time.sleep(config.LISTEN_INTERVAL)

@@ -1,10 +1,8 @@
 
 .DS_Store
-__pycache__/config.cpython-39.pyc
-test.py
 *.pyc
 *.json
 *.service
-auto_import.py
-auto_clean.py
-miriya_record.py
+log
+record
+venv
