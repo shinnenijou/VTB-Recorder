@@ -1,5 +1,7 @@
+# 录像功能合并进QQbot后台，本录像项目库关闭。
+
 # VTB-Recorder
- 
+
 自用VTB录像机, 目前支持平台: Twitcasting, bilibili
 TODO: 加入Youtube录制
 
